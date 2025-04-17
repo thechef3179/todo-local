@@ -27,6 +27,16 @@ struct Args {
     category: Option<String>,
 }
 
+// function to create the data file if it doesn't exist
+fn ensure_data_file(main_file: &str) -> std::io::Result<()> {
+    if !std::path::Path::new(main_file).exists() {
+        #[allow(unused_variables)]
+        let file = fs::File::create(main_file)?;
+        let initial_data: String = "{\"data\": []}".to_owned();
+        fs::write(main_file, &initial_data)?;
+    }
+    Ok(())
+}
 
 fn main() {
     // parse arguments
@@ -38,9 +48,11 @@ fn main() {
    
     // main data file name
     let main_file: String = "data.json".to_owned();
+    let _ = ensure_data_file(&main_file);
     let current_string: String = fs::read_to_string(&main_file)
-        .expect("File could not be found.");
+        .expect("File is opened to store data.");
     let current_data: &mut JsonValue = &mut json::parse(&current_string).unwrap()["data"];
+    // let current_data: &mut JsonValue = &mut json::parse(&current_string).unwrap();
 
     // for list commands
     if args.command == "list" {
@@ -48,7 +60,7 @@ fn main() {
             // todo list --all --category _category_
             if args.category != None {
                 let category__: String = args.category.to_owned().unwrap();
-                println!("You are trying to list all tasks in category: {}", category__);
+                // println!("You are trying to list all tasks in category: {}", category__);
                 for index_ in 0..current_data.len() {
                     let curr: JsonValue = current_data[index_].clone();
                     let done_: bool = json::stringify(curr["done"].clone()).parse().expect("Parsing a true-false value");
@@ -63,7 +75,7 @@ fn main() {
             } 
             // todo list --all
             else {    
-                println!("You are trying to print all tasks!");
+                // println!("You are trying to print all tasks!");
                 for index_ in 0..current_data.len() {
                     let curr: JsonValue = current_data[index_].clone();
                     let done_: bool = json::stringify(curr["done"].clone()).parse().expect("Parsing a true-false value");
