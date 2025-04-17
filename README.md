@@ -1,6 +1,6 @@
 # Todo CLI app
 
-A CLI to-do app written in Rust.
+A CLI to-do app written in Rust that uses json file for storage.
 
 ## List of Commands
 | Implemented | Command | Description |
